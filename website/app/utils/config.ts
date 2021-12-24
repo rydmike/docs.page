@@ -1,4 +1,4 @@
-import { getBoolean, getNumber, getString, getValue } from './get';
+import { getBoolean, getNumber, getString, getStringArray, getValue } from './get';
 import get from 'lodash.get';
 
 // Represents how the sidebar should look in the config file.
@@ -74,6 +74,8 @@ export interface ProjectConfig {
   noindex: boolean;
   // A color theme used for this project. Defaults to "#00bcd4".
   theme: string;
+  // Any enabled locales.
+  locale: Array<string>;
   // Docsearch Application ID. If populated, a search box with autocomplete will be rendered.
   docsearch?: {
     appId?: string;
@@ -101,6 +103,7 @@ export const defaultConfig: ProjectConfig = {
   favicon: '',
   socialPreview: '',
   twitter: '',
+  locale: [],
   noindex: false,
   theme: '#00bcd4',
   // navigation: [],
@@ -123,6 +126,7 @@ export function mergeConfig(json: Record<string, unknown>): ProjectConfig {
     twitter: getString(json, 'twitter', defaultConfig.twitter),
     noindex: getBoolean(json, 'noindex', defaultConfig.noindex),
     theme: getString(json, 'theme', defaultConfig.theme),
+    locale: getStringArray(json, 'locale'),
     docsearch: getValue(json, 'docsearch')
       ? {
         appId: getString(json, 'docsearch.appId', ''),

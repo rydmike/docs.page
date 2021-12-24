@@ -18,6 +18,17 @@ export function getString(
   return value;
 }
 
+// Returns an array of string values
+export function getStringArray(json: Record<string, unknown>, key: string): Array<string> {
+  const value = get<Record<string, unknown>, string>(json, key);
+
+  if (!value || !Array.isArray(value)) {
+    return [];
+  }
+
+  return value.map(v => `${v}`);
+}
+
 // Returns a guaranteed number value from an object
 export function getNumber(
   json: Record<string, unknown>,
