@@ -74,7 +74,7 @@ project config file is not found.
 | --------- | --------- | ------- |
 | `noindex` | `boolean` | `false` |
 
-To learn more about indexing, view the [Advanced documentation](advanced).
+To learn more about indexing, view the [Advanced documentation](/advanced).
 
 ### `theme`
 
@@ -114,35 +114,20 @@ For example:
 }
 ```
 
-### `navigation`
+### `automaticallyInferNextPrevious`
 
-An array of navigation items. If provided, the links will be displayed in the website header.
+A boolean indicating if the next and previous links should be automatically inferred from the sidebar configuration.
+You can still overwrite a specific link by providing the `next` and `previous` keys in the [frontmatter](/frontmatter).
 
-| Key          | Type               | Default |
-| ------------ | ------------------ | ------- |
-| `navigation` | `NavigationItem[]` | `[]`    |
-
-| `NavigationItem` | Type     | Default |
-| ---------------- | -------- | ------- |
-| [0]              | `string` |         |
-| [1]              | `string` |         |
-
-The fist item of an item is the title, and the second item is a URL, for example:
-
-```json
-{
-  "navigation": [
-    ["Example", "/example"],
-    ["External", "https://google.com"]
-  ]
-}
-```
+| Key                              | Type      | Default |
+| -------------------------------- | --------- | ------- |
+| `automaticallyInferNextPrevious` | `boolean` | `true`  |
 
 ### `sidebar`
 
 An array containing nested sidebar array items. If provided, will be rendered on every page down the left hand side.
 
-A sidebar item can contain an array with two string values, or an array where the first string value is a title and the second value is another nested array (which will be displayed as an expandable list).
+A sidebar item can contain an array with two string values, or an array where the first string value is a title and the second value is an array with two string values.
 
 | Key       | Type            | Default |
 | --------- | --------------- | ------- |
@@ -153,24 +138,18 @@ A sidebar item can contain an array with two string values, or an array where th
 | [0]               | `string` |         |
 | [1]               | `string` |         |
 
-| `SidebarItem` (2) | Type            | Default |
-| ----------------- | --------------- | ------- |
-| [0]               | `string`        |         |
-| [1]               | `SidebarItem[]` |         |
+| `SidebarItem` (2) | Type              | Default |
+| ----------------- | ----------------- | ------- |
+| [0]               | `string`          |         |
+| [1]               | `[string,string]` |         |
 
 For example, the following will create a sidebar with a single link and nested expandable sidebar:
 
 ```json
 {
-  "navigation": [
+  "sidebar": [
     ["Example", "/example"],
-    [
-      "Expandable",
-      [
-        ["Nested Example", "/example-nested"],
-        ["Nested Expandable", [["Nested x2 Example", "/example-nested-x2"]]]
-      ]
-    ]
+    ["Section Title", [["Nested Title", "/nested-example"]]]
   ]
 }
 ```
@@ -220,6 +199,14 @@ If provided, Google Tag Manager will be added to all of your documentation pages
 | ------------------ | -------- | ------- |
 | `googleTagManager` | `string` |         |
 
+### `googleAnalytics`
+
+If provided, Google Analytics will be added to all of your documentation pages.
+
+| Key               | Type     | Default |
+| ----------------- | -------- | ------- |
+| `googleAnalytics` | `string` |         |
+
 ### `zoomImages`
 
 A boolean value representing whether images are zoomable by default.
@@ -229,3 +216,11 @@ Note; If using the `<Image />` component, the `zoom` property provided will over
 | Key          | Type      | Default |
 | ------------ | --------- | ------- |
 | `zoomImages` | `boolean` | `false` |
+
+### `plausibleAnalytics`
+
+If enabled, Plausible Analytics will be added to all of your documentation pages only if a custom domain has been enabled for this project.
+
+| Key                  | Type      | Default |
+| -------------------- | --------- | ------- |
+| `plausibleAnalytics` | `boolean` | `false` |

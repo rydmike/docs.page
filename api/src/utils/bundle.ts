@@ -1,18 +1,11 @@
-import { bundle } from './bundler.js';
-import { getPlugins } from './getPlugins.js';
+import { bundle } from '../bundler/bundler.js';
+import { getPlugins } from '../bundler/getPlugins.js';
 import { Contents, getConfigs, getGitHubContents } from './github.js';
-import { HeadingNode } from './plugins/rehype-headings.js';
+import { HeadingNode } from '../bundler/plugins/rehype-headings.js';
 import { formatSourceAndRef } from './ref.js';
 import { getRepositorySymLinks } from './symlinks.js';
-import {
-  hasLocales,
-  InputConfig,
-  OutputConfig,
-  defaultConfig,
-  ErrorReason,
-} from '@docs.page/server';
-import yaml from 'js-yaml';
-import toml from '@ltd/j-toml';
+import { OutputConfig, defaultConfig, ErrorReason } from '@docs.page/server';
+import { formatConfigLocales } from './config.js';
 
 type Frontmatter = Record<string, string>;
 
@@ -20,7 +13,7 @@ type Source = {
   type: 'PR' | 'commit' | 'branch';
   owner: string;
   repository: string;
-  ref: string;
+  ref?: string;
 };
 
 type BundleConstructorParams = {
@@ -44,7 +37,7 @@ export class Bundle {
   repositoryFound: boolean;
   source: Source;
   sourceChecked: boolean;
-  ref: string;
+  ref?: string;
   headerDepth: number;
   built: boolean;
   contentFetched: boolean;
@@ -71,9 +64,9 @@ export class Bundle {
       type: 'branch',
       owner,
       repository,
-      ref: ref || 'HEAD',
+      ref: ref,
     };
-    this.ref = ref || 'HEAD';
+    this.ref = ref;
     this.sourceChecked = false;
     this.built = false;
     this.contentFetched = false;
@@ -107,9 +100,16 @@ export class Bundle {
       throw new BundleError(404, "Couldn't find github contents", 'REPO_NOT_FOUND');
     }
     this.baseBranch = githubContents.baseBranch;
+
+    if (!this.ref) {
+      this.ref = this.baseBranch;
+      this.source.ref = this.baseBranch;
+    }
+
     this.repositoryFound = githubContents.repositoryFound;
 
-    this.formatConfigLocales(githubContents.config);
+    this.config = formatConfigLocales(githubContents.config, this.path);
+
     await this.matchSymLinks();
     if (githubContents.md === null) {
       throw new BundleError(404, "Couldn't find file", 'FILE_NOT_FOUND');
@@ -127,7 +127,8 @@ export class Bundle {
     if (!repositoryFound || !config) {
       throw new BundleError(404, 'Unable to fetch config file.');
     }
-    this.formatConfigLocales(config);
+
+    this.config = formatConfigLocales(config, this.path);
 
     return this.config;
   }
@@ -164,7 +165,7 @@ export class Bundle {
       this.source.owner,
       this.source.repository,
       'docs',
-      this.source.ref,
+      this.source.ref!,
     );
 
     const matches = symLinks.filter(s => s.formattedPath === this.path);
@@ -182,43 +183,6 @@ export class Bundle {
       if (symMarkdown) {
         this.markdown = symMarkdown;
       }
-    }
-  }
-
-  formatConfigLocales(config?: { configJson?: string; configYaml?: string; configToml?: string }) {
-    if (!config?.configJson && !config?.configYaml && !config?.configToml) {
-      throw new BundleError(404, 'Not found: Config file missing', 'MISSING_CONFIG');
-    }
-    const { configJson, configYaml, configToml } = config;
-
-    let inputConfig: InputConfig = defaultConfig;
-    // TODO: validation of config?
-
-    try {
-      if (configJson) {
-        inputConfig = JSON.parse(configJson) as InputConfig;
-      } else if (configYaml) {
-        inputConfig = yaml.load(configYaml) as InputConfig;
-      } else if (configToml) {
-        //@ts-ignore
-        inputConfig = Object.assign({}, toml.parse(configToml) as InputConfig);
-      }
-    } catch (e) {
-      console.error(e);
-      throw new BundleError(500, 'Error parsing config', 'BAD_CONFIG');
-    }
-
-    if (hasLocales(inputConfig)) {
-      const defaulLocale = inputConfig.locales[0];
-
-      const currentLocale = this.path.split('/')[0] || defaulLocale;
-
-      this.config = {
-        ...inputConfig,
-        sidebar: inputConfig?.sidebar[currentLocale],
-      };
-    } else {
-      this.config = inputConfig;
     }
   }
 }

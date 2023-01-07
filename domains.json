@@ -20,8 +20,8 @@
 		"invertase/react-query-firebase"
 	],
 	[
-		"gorouter.dev",
-		"csells/go_router"
+		"docs.flexcolorscheme.com",
+		"rydmike/flex_color_scheme_docs"
 	],
 	[
   		"docs.flexcolorscheme.com",
@@ -30,5 +30,33 @@
 	[
 		"docs.lunasea.app",
 		"JagandeepBrar/LunaSea"
+	],
+	[
+		"docs.widgetbook.io",
+		"widgetbook/widgetbook"
+	],
+	[
+		"goconfigenv.ganeshagrawal.com",
+		"iamganeshagrawal/goconfigenv"
+	],
+	[
+		"docs.ayphu.com",
+		"ayphu/docs"
+	],
+	[
+		"docs.zapp.run",
+		"invertase/zapp.run"
+	],
+	[
+		"dokumentacja.otwartaturystyka.pl",
+		"opentouristics/database-tools"
+	],
+	[
+		"patrol.leancode.co",
+		"leancodepl/patrol"
+	],
+	[
+		"patrol.leancode.pl",
+		"leancodepl/patrol"
 	]
 ]

@@ -18,7 +18,7 @@ export interface ConfigWithoutLocales {
   theme: string;
   // Docsearch Application ID. If populated, a search box with autocomplete will be rendered.
   docsearch?: {
-    appId?: string;
+    appId: string;
     apiKey: string;
     indexName: string;
   };
@@ -31,11 +31,17 @@ export interface ConfigWithoutLocales {
   // Adds Google Tag Manager to your documentation pages.
   googleTagManager: string;
   // Whether zoomable images are enabled by default
+  googleAnalytics: string;
+  // Whether zoomable images are enabled by default
   zoomImages: boolean;
   // Whether CodeHike is enabled
   experimentalCodehike: boolean;
   // Whether Math is enabled
   experimentalMath: boolean;
+  // automatically infer next/previous
+  automaticallyInferNextPrevious: boolean;
+  // Adds Plausible Analytics to your documentation pages.
+  plausibleAnalytics: string;
 }
 
 export interface ConfigWithLocales {
@@ -71,12 +77,18 @@ export interface ConfigWithLocales {
   variables: Record<string, string>;
   // Adds Google Tag Manager to your documentation pages.
   googleTagManager: string;
+  // Adds Google Analytics to your documentation pages.
+  googleAnalytics: string;
   // Whether zoomable images are enabled by default
   zoomImages: boolean;
   // Whether CodeHike is enabled
   experimentalCodehike: boolean;
   // Whether Math is enabled
   experimentalMath: boolean;
+  // automatically infer next/previous
+  automaticallyInferNextPrevious: boolean;
+  // Adds Plausible Analytics to your documentation pages.
+  plausibleAnalytics: string;
 }
 export type InputConfig = ConfigWithoutLocales | ConfigWithLocales;
 
@@ -119,12 +131,18 @@ export interface OutputConfig {
   variables: Record<string, string>;
   // Adds Google Tag Manager to your documentation pages.
   googleTagManager: string;
+  // Adds Google Analytics to your documentation pages.
+  googleAnalytics: string;
   // Whether zoomable images are enabled by default
   zoomImages: boolean;
   // Whether CodeHike is enabled
   experimentalCodehike: boolean;
   // Whether Math is enabled
   experimentalMath: boolean;
+  // automatically infer next/previous
+  automaticallyInferNextPrevious: boolean;
+  // Adds Plausible Analytics to your documentation pages.
+  plausibleAnalytics: boolean;
 }
 
 export const defaultConfig: OutputConfig = {
@@ -141,9 +159,12 @@ export const defaultConfig: OutputConfig = {
   headerDepth: 3,
   variables: {},
   googleTagManager: '',
+  googleAnalytics: '',
   zoomImages: false,
   experimentalCodehike: false,
   experimentalMath: false,
+  automaticallyInferNextPrevious: true,
+  plausibleAnalytics: false,
 };
 
 export type FetchBundleInput = {
@@ -175,7 +196,7 @@ export type BundleError = {
 
 export type BundleSuccess = {
   code: string;
-  config: Record<string, unknown>;
+  config: OutputConfig;
   frontmatter: {
     [key: string]: string;
   };
